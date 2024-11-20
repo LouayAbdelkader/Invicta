@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1  # Number of replicas of your frontend application
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: silou19/frontend:latest  # Image for the frontend app
+          ports:
+            - containerPort: 80  # React build output is typically served on port 80 for static files
+          env:
+            - name: NODE_ENV
+              value: "production"  # Set environment variable to production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer  # Exposes the service to the outside of the cluster

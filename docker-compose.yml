@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "6001:6001"
+    depends_on:
+      - mongo
+
+  product-service:
+    build:
+      context: ./product-service
+    ports:
+      - "6002:6002"
+    depends_on:
+      - mongo
+
+  cart-service:
+    build:
+      context: ./cart-service
+    ports:
+      - "6003:6003"
+    depends_on:
+      - mongo
+
+  order-service:
+    build:
+      context: ./order-service
+    ports:
+      - "6004:6004"
+    depends_on:
+      - mongo
+
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - "6005:6005"
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - product-service
+      - cart-service
+      - order-service
+      - payment-service
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "6000:6000"
+    depends_on:
+      - user-service
+      - product-service
+      - cart-service
+      - order-service
+      - payment-service
+
+volumes:
+  mongo-data:
